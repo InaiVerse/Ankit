@@ -1,1 +1,58 @@
+# ---- GLOBAL ----
+.DS_Store
+Thumbs.db
+*.swp
+
+# ---- Node ----
+node_modules/
+npm-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+# ---- Environment ----
 .env
+.env.*
+!.env.example
+
+# ---- Logs ----
+logs/
+*.log
+*.log.*
+
+# ---- Build Output ----
+dist/
+build/
+out/
+.cache/
+.cache-loader/
+.parcel-cache/
+.vite/
+.next/
+.nuxt/
+
+# ---- Uploads ----
+uploads/
+temp/
+tmp/
+
+# ---- Python ----
+__pycache__/
+*.pyc
+.venv/
+venv/
+
+# ---- Docker ----
+docker-compose.override.yml
+*.dockerfile.tmp
+
+# ---- IDE ----
+.vscode/
+.idea/
+*.swp
+
+# ---- Security / Keys ----
+*.pem
+*.key
+secrets/
+aws_credentials/

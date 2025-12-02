@@ -1,6 +1,69 @@
-venv/
+# Node.js
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+# Environment
+.env
+.env.local
+.env.dev
+.env.test
+.env.stage
+.env.production
+
+# Logs
+logs/
+*.log
+*.log.*
+pids/
+*.pid
+*.seed
+*.pid.lock
+
+# Upload folders
+uploads/
+public/uploads/
+tmp/
+temp/
+
+# Build Output
+dist/
+build/
+.cache/
+.cache-loader/
+
+# TypeScript
+*.tsbuildinfo
+
+# Python (optional)
 __pycache__/
 *.pyc
-.env
+*.pyo
+*.pyd
+.venv/
+env/
+venv/
+pip-wheel-metadata/
+pytest_cache/
+
+# Docker
+*.dockerfile.tmp
+docker-compose.override.yml
+
+# IDE
+.vscode/
+.idea/
+*.swp
+
+# OS
 .DS_Store
-node_modules/
+Thumbs.db
+
+# Security
+aws_credentials/
+*.pem
+*.key
+secrets/
