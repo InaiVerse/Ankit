@@ -1,13 +1,11 @@
-FROM node:20-alpine
+FROM python:3.10-slim
 
 WORKDIR /app
 
-# Install only production deps
-COPY package*.json ./
-RUN npm install --production --legacy-peer-deps
+COPY requirements.txt .
+
+RUN pip install --no-cache-dir -r requirements.txt
 
 COPY . .
 
-EXPOSE 5000
-
-CMD ["npm", "start"]
+CMD ["uvicorn", "app:app", "--host", "0.0.0.0", "--port", "8000"]
