@@ -1,42 +1,43 @@
 name: CD Pipeline
 
-
 on:
   push:
     branches:
-      - developer        # Deploy only when main gets updated
-
+      - developer   # Deploy when developer branch is updated
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
 
-
     steps:
-      # 1) Checkout the code
+      # 1️⃣ Checkout the code
       - name: Checkout Repo
         uses: actions/checkout@v3
 
-
-      # -------------------------
-      # 2) Setup SSH to EC2
-      # -------------------------
-      - name: Set up SSH
+      # 2️⃣ Setup SSH
+      - name: Setup SSH
         run: |
           mkdir -p ~/.ssh
           echo "${{ secrets.EC2_SSH_KEY }}" > ~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa
           ssh-keyscan -H ${{ secrets.EC2_HOST }} >> ~/.ssh/known_hosts
 
+      # ✅ 3️⃣ FIX REMOTE PERMISSIONS FIRST
+      - name: Fix permissions on EC2
+        run: |
+          ssh ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} "
+            sudo mkdir -p ${{ secrets.EC2_PATH }} &&
+            sudo chown -R ${{ secrets.EC2_USER }}:${{ secrets.EC2_USER }} ${{ secrets.EC2_PATH }} &&
+            sudo chmod -R 755 ${{ secrets.EC2_PATH }}
+          "
 
-      # 3) Copy project to EC2 
+      # 4️⃣ Copy project to EC2 (FIXED)
       - name: Copy files to EC2
         run: |
-          rsync -avz --exclude '.git' ./ \
-            ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }}:${{ secrets.EC2_PATH }}
+          rsync -avz --delete --exclude '.git' ./ \
+          ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }}:${{ secrets.EC2_PATH }}/
 
-
-      # 4) Run deployment steps on EC2 - EC2_HOST = ip   
+      # 5️⃣ Run Docker Deployment on EC2
       - name: Deploy on EC2
         run: |
           ssh ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} "
