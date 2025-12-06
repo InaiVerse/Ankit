@@ -29,14 +29,7 @@ app = FastAPI(
 app.add_middleware(
     CORSMiddleware,
     allow_origins=[
-        "http://localhost:3000",
-        "http://localhost:5173",
-        "http://127.0.0.1:3000",
-        "http://127.0.0.1:5173",
-        "http://65.2.121.160:5173",
-        "http://65.2.121.160:8000",
-        "http://13.233.199.200:5173",
-        "http://13.233.199.200:8000"
+"*"
         # Add your real domain later, e.g.:
         # "https://yourdomain.com"
     ],
