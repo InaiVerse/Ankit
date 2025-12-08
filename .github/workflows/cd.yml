@@ -48,9 +48,9 @@ jobs:
       # 6️⃣ Deploy on EC2 (DOCKER — FINAL FIX)
       - name: Deploy on EC2
         run: |
-          ssh ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} "
+          ssh ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} '
             cd /app &&
-            docker compose -f /app/docker-compose.yml down &&
-            docker compose -f /app/docker-compose.yml build &&
-            docker compose -f /app/docker-compose.yml up -d
-          "
+            docker compose down &&
+            docker compose build &&
+            docker compose up -d
+          '
