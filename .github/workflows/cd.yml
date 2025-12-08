@@ -3,14 +3,14 @@ name: CD Pipeline
 on:
   push:
     branches:
-      - developer   # Deploy when developer branch is updated
+      - developer
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
 
     steps:
-      # 1️⃣ Checkout the code
+      # 1️⃣ Checkout the repository
       - name: Checkout Repo
         uses: actions/checkout@v3
 
@@ -22,27 +22,35 @@ jobs:
           chmod 600 ~/.ssh/id_rsa
           ssh-keyscan -H ${{ secrets.EC2_HOST }} >> ~/.ssh/known_hosts
 
-      # ✅ 3️⃣ FIX REMOTE PERMISSIONS FIRST
+      # 3️⃣ Fix permissions on EC2
       - name: Fix permissions on EC2
         run: |
           ssh ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} "
-            sudo mkdir -p ${{ secrets.EC2_PATH }} &&
-            sudo chown -R ${{ secrets.EC2_USER }}:${{ secrets.EC2_USER }} ${{ secrets.EC2_PATH }} &&
-            sudo chmod -R 755 ${{ secrets.EC2_PATH }}
+            sudo mkdir -p /app &&
+            sudo chown -R ${{ secrets.EC2_USER }}:${{ secrets.EC2_USER }} /app &&
+            sudo chmod -R 755 /app
           "
 
-      # 4️⃣ Copy project to EC2 (FIXED)
+      # 4️⃣ Copy project to EC2
       - name: Copy files to EC2
         run: |
           rsync -avz --delete --exclude '.git' ./ \
-          ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }}:${{ secrets.EC2_PATH }}/
+          ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }}:/app/
 
-      # 5️⃣ Run Docker Deployment on EC2
+      # 5️⃣ Verify files on EC2
+      - name: Verify files on EC2
+        run: |
+          ssh ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} "
+            pwd &&
+            ls -la /app
+          "
+
+      # 6️⃣ Deploy on EC2 (DOCKER — FINAL FIX)
       - name: Deploy on EC2
         run: |
           ssh ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} "
-            cd ${{ secrets.EC2_PATH }} &&
-            docker-compose down &&
-            docker-compose build &&
-            docker-compose up -d
+            cd /app &&
+            docker compose -f /app/docker-compose.yml down &&
+            docker compose -f /app/docker-compose.yml build &&
+            docker compose -f /app/docker-compose.yml up -d
           "
